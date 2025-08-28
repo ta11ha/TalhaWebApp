@@ -18,7 +18,13 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libgl1
 
 echo "[startup] Ensuring Python packages are installed..."
 python -m pip install --upgrade pip
-python -m pip install --no-cache-dir -r /home/site/wwwroot/requirements.txt
+
+if [ -f "/home/site/wwwroot/requirements.txt" ]; then
+    echo "[startup] Installing from requirements.txt..."
+    python -m pip install --no-cache-dir -r /home/site/wwwroot/requirements.txt
+else
+    echo "[startup] WARNING: requirements.txt not found. Skipping dependency installation."
+fi
 
 echo "[startup] Starting Gunicorn..."
 exec gunicorn talha:app --bind=0.0.0.0:$PORT --workers=4 --timeout 600
